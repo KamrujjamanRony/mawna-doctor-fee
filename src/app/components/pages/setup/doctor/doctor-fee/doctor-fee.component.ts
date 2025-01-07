@@ -54,7 +54,7 @@ export class DoctorFeeComponent {
     amount: [''],
     discount: [''],
     remarks: [''],
-    postBy: ['superSoft'],
+    postBy: [''],
     nextFlowDate: [null],
     entryDate: [this.today, [Validators.required]],
   });
@@ -532,7 +532,7 @@ export class DoctorFeeComponent {
     const pageSizeWidth = 80;
     const pageSizeHeight = 100;
     const marginLeft = 10; // Left margin
-    const marginTopStart = 15; // Starting top margin
+    const marginTopStart = 3; // Starting top margin
     const marginBottom = -10; // Bottom margin
     const marginRight = 10; // Right margin
 
@@ -578,10 +578,15 @@ export class DoctorFeeComponent {
         `Patient Type: ${entry.patientType}`,
         `Amount: ${entry.amount?.toFixed(0) || 'N/A'} Tk`,
         `Discount: ${entry.discount?.toFixed(0) || 'N/A'} Tk`,
+        `Entry Date: ${entry.entryDate
+          ? this.transform(entry.entryDate, 'dd/MM/yyyy')
+          : 'N/A'
+        }`,
         `Next Follow Date: ${entry.nextFlowDate
           ? this.transform(entry.nextFlowDate, 'dd/MM/yyyy')
           : 'N/A'
         }`,
+        `Post by: ${entry.postBy || 'Not Entry'}`,
         `Remarks: ${entry.remarks || 'N/A'}`,
       ];
 
