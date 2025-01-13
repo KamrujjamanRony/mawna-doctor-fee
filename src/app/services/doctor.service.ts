@@ -9,7 +9,7 @@ export class DoctorService {
   // 192.168.0.138
 
   http = inject(HttpClient);
-  rootUrl = 'http://192.168.0.138/hms/api/DoctorEntry'
+  rootUrl = 'http://localhost/hms/api/DoctorEntry'
 
   addDoctor(model: any | FormData): Observable<void> {
     return this.http.post<void>(this.rootUrl, model)

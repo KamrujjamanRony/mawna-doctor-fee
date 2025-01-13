@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class DoctorFeeFeeService {
 
   http = inject(HttpClient);
-  rootUrl = 'http://192.168.0.138/hms/api/DoctorFee'
+  rootUrl = 'http://localhost/hms/api/DoctorFee'
 
   addDoctorFee(model: any | FormData): Observable<void> {
     return this.http.post<void>(this.rootUrl, model)

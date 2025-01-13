@@ -18,6 +18,7 @@ import 'jspdf-autotable';
   selector: 'app-doctor-fee',
   standalone: true,
   imports: [ReactiveFormsModule, FormsModule, ToastSuccessComponent, SearchComponent, CommonModule, FieldComponent, ModalWrapperComponent],
+  providers: [DatePipe],
   templateUrl: './doctor-fee.component.html',
   styleUrl: './doctor-fee.component.css'
 })
@@ -26,6 +27,7 @@ export class DoctorFeeComponent {
   private patientService = inject(PatientService);
   private doctorService = inject(DoctorService);
   private doctorFeeService = inject(DoctorFeeFeeService);
+  private datePipe = inject(DatePipe);
   dataFetchService = inject(DataFetchService);
   isLoading$: Observable<any> | undefined;
   hasError$: Observable<any> | undefined;
@@ -44,7 +46,7 @@ export class DoctorFeeComponent {
   toDate: any;
   nextFollowDate: any;
   highlightedTr: number = -1;
-  today = new Date();
+  // today = new Date();
   isSubmitted = false;
 
   form = this.fb.group<any>({
@@ -56,7 +58,7 @@ export class DoctorFeeComponent {
     remarks: [''],
     postBy: [''],
     nextFlowDate: [null],
-    entryDate: [this.today, [Validators.required]],
+    entryDate: [""],
   });
 
 
@@ -147,8 +149,9 @@ export class DoctorFeeComponent {
     this.isPatientEnable = true;
     // console.log(this.form.value)
     if (this.form.valid) {
+      const formattedDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
       if (!this.selected) {
-        this.doctorFeeService.addDoctorFee(this.form.value)
+        this.doctorFeeService.addDoctorFee({ ...this.form.value, entryDate: formattedDate })
           .subscribe({
             next: (response) => {
               console.log(response);
@@ -169,7 +172,7 @@ export class DoctorFeeComponent {
             }
           });
       } else {
-        this.doctorFeeService.updateDoctorFee(this.selected, this.form.value)
+        this.doctorFeeService.updateDoctorFee(this.selected, { ...this.form.value, entryDate: formattedDate })
           .subscribe({
             next: (response) => {
               if (response !== null && response !== undefined) {
@@ -207,7 +210,7 @@ export class DoctorFeeComponent {
         const date = new Date(data.nextFlowDate);
         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
       })()
-      : '';
+      : null;
 
     this.form.patchValue({
       patientRegId: data?.patientRegId,
@@ -262,7 +265,7 @@ export class DoctorFeeComponent {
       remarks: '',
       postBy: 'superSoft',
       nextFlowDate: null,
-      entryDate: this.today
+      entryDate: ""
     });
     this.isSubmitted = false;
     this.selected = null;
@@ -518,7 +521,7 @@ export class DoctorFeeComponent {
       remarks: '',
       postBy: '',
       nextFlowDate: null,
-      entryDate: this.today
+      entryDate: "",
     });
     this.selected = null;
     this.isSubmitted = false;
@@ -563,7 +566,7 @@ export class DoctorFeeComponent {
 
     // Patient and Fee Details
     if (entry) {
-      marginTop += 6;
+      marginTop += 1;
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
       doc.text('Patient Details:', marginLeft, marginTop);
@@ -580,6 +583,10 @@ export class DoctorFeeComponent {
         `Discount: ${entry.discount?.toFixed(0) || 'N/A'} Tk`,
         `Entry Date: ${entry.entryDate
           ? this.transform(entry.entryDate, 'dd/MM/yyyy')
+          : 'N/A'
+        }`,
+        `Entry Time: ${entry.entryDate
+          ? entry.entryDate.split("T")[1]
           : 'N/A'
         }`,
         `Next Follow Date: ${entry.nextFlowDate
