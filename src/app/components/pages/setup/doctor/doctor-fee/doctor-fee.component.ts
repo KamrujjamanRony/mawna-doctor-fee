@@ -48,6 +48,7 @@ export class DoctorFeeComponent {
   highlightedTr: number = -1;
   // today = new Date();
   isSubmitted = false;
+  isSubmitting = signal<boolean>(false);
 
   form = this.fb.group<any>({
     doctorId: [{ value: '', disabled: false }, [Validators.required]],
@@ -147,6 +148,7 @@ export class DoctorFeeComponent {
     this.isDoctorEnable = true;
     this.form.get('patientRegId')?.enable();
     this.isPatientEnable = true;
+    this.isSubmitting.set(true);
     // console.log(this.form.value)
     if (this.form.valid) {
       const formattedDate = this.datePipe.transform(new Date(), 'yyyy-MM-ddTHH:mm:ss');
@@ -199,6 +201,8 @@ export class DoctorFeeComponent {
     } else {
       alert('Form is invalid! Please Fill Patient and Doctor.');
     }
+
+    this.isSubmitting.set(false);
   }
 
   onUpdate(data: any) {

@@ -20,9 +20,10 @@ export class DoctorEntryComponent {
   private doctorService = inject(DoctorService);
   dataFetchService = inject(DataFetchService);
   filteredDoctorList = signal<any[]>([]);
+  isSubmitting = signal<boolean>(false);
 
-  isChamberOptions: any[] = [{ id: "", name: 'Select' },{ id: -1, name: 'No' }, { id: 1, name: 'Yes' }];
-  takeComOptions: any[] = [{ id: "", name: 'Select' },{ id: 0, name: 'No' }, { id: 1, name: 'Yes' }];
+  isChamberOptions: any[] = [{ id: "", name: 'Select' }, { id: -1, name: 'No' }, { id: 1, name: 'Yes' }];
+  takeComOptions: any[] = [{ id: "", name: 'Select' }, { id: 0, name: 'No' }, { id: 1, name: 'Yes' }];
   selectedDoctor: any;
   newMpo: string = '';
   highlightedTr: number = -1;
@@ -121,7 +122,7 @@ export class DoctorEntryComponent {
       this.onSubmit(keyboardEvent);
     }
   }
-  
+
   handleSearchKeyDown(event: KeyboardEvent) {
     if (this.filteredDoctorList().length === 0) {
       return; // Exit if there are no items to navigate
@@ -156,8 +157,9 @@ export class DoctorEntryComponent {
 
   onSubmit(e: Event) {
     this.isSubmitted = true;
+    this.isSubmitting.set(true);
     if (this.form.valid) {
-      this.form.value.drFee ?? this.form.patchValue({drFee: 0});
+      this.form.value.drFee ?? this.form.patchValue({ drFee: 0 });
       // console.log(this.form.value);
       if (this.selectedDoctor) {
         this.doctorService.updateDoctor(this.selectedDoctor.id, this.form.value)
@@ -203,6 +205,7 @@ export class DoctorEntryComponent {
     } else {
       alert('Form is invalid! Please Fill Name Field.');
     }
+    this.isSubmitting.set(false);
   }
 
   onUpdate(data: any) {
@@ -229,7 +232,7 @@ export class DoctorEntryComponent {
   }
 
   onDelete(id: any) {
-    if(confirm("Are you sure you want to delete?")) {
+    if (confirm("Are you sure you want to delete?")) {
       this.doctorService.deleteDoctor(id).subscribe(data => {
         if (data.id) {
           this.success.set("Doctor deleted successfully!");
@@ -267,7 +270,7 @@ export class DoctorEntryComponent {
   // mpoOptions: string[] = [];
   // isDropdownOpen: boolean = false;
   // highlightedIndex: number = -1;
-  
+
   // addMpo(e: Event) {
   //   e.preventDefault();
   //   const currentValue = this.getControl('mpoId').value;
@@ -277,25 +280,25 @@ export class DoctorEntryComponent {
   //     this.isDropdownOpen = false;
   //   }
   // }
-  
+
   // toggleDropdown(e: any) {
   //   e.preventDefault();
   //   this.isDropdownOpen = !this.isDropdownOpen;
   //   this.highlightedIndex = -1;
   // }
-  
+
   // selectMpo(option: string) {
   //   this.getControl('mpoId').setValue(option);
   //   this.isDropdownOpen = false;
   //   this.highlightedIndex = -1;
   // }
-  
+
   // handleMpoKeyDown(event: KeyboardEvent) {
   //   if (event.key === 'ArrowDown') {
   //     this.isDropdownOpen = true;
   //     event.preventDefault();
   //   }
-    
+
   //   if (this.isDropdownOpen && this.mpoOptions.length > 0) {
   //     if (event.key === 'ArrowDown') {
   //       this.highlightedIndex =

@@ -16,12 +16,12 @@ import { FieldComponent } from "../../shared/field/field.component";
   styleUrl: './registration.component.css'
 })
 export class RegistrationComponent {
-onPatientSearchChange($event: Event) {
-throw new Error('Method not implemented.');
-}
-handlePatientKeyDown($event: KeyboardEvent) {
-throw new Error('Method not implemented.');
-}
+  onPatientSearchChange($event: Event) {
+    throw new Error('Method not implemented.');
+  }
+  handlePatientKeyDown($event: KeyboardEvent) {
+    throw new Error('Method not implemented.');
+  }
   fb = inject(NonNullableFormBuilder);
   private patientService = inject(PatientService);
   dataFetchService = inject(DataFetchService);
@@ -40,6 +40,7 @@ throw new Error('Method not implemented.');
   @ViewChildren('inputRef') inputRefs!: QueryList<ElementRef>;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   isSubmitted = false;
+  isSubmitting = signal<boolean>(false);
   form = this.fb.group({
     regNo: [{ value: '', disabled: true }],
     name: ['', [Validators.required]],
@@ -152,6 +153,7 @@ throw new Error('Method not implemented.');
 
   onSubmit(e: Event) {
     this.isSubmitted = true;
+    this.isSubmitting.set(true);
     this.form.get('regNo')?.enable();
     if (this.form.valid) {
       // console.log(this.form.value);
@@ -199,7 +201,8 @@ throw new Error('Method not implemented.');
     } else {
       alert('Form is invalid! Please Fill Contact No, Name, Sex, Date of Birth and Address.');
     }
-    
+
+    this.isSubmitting.set(false);
     this.form.get('regNo')?.disable();
   }
 
@@ -231,7 +234,7 @@ throw new Error('Method not implemented.');
   }
 
   onDelete(id: any) {
-    if(confirm("Are you sure you want to delete?")) {
+    if (confirm("Are you sure you want to delete?")) {
       this.patientService.deletePatient(id).subscribe(data => {
         if (data.id) {
           this.success.set("Doctor fee deleted successfully!");
@@ -244,7 +247,7 @@ throw new Error('Method not implemented.');
         }
       });
     }
-    
+
   }
 
   formReset(e: Event): void {
